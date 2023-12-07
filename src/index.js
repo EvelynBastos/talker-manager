@@ -51,20 +51,21 @@ app.post('/login', authLogin, authPass, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token });
 });
 
-app.post('/talker', authToken, validateName, validateAge, validateTalk, validateRate, validateWatchedAt, async (req, res) => {
-  const talkers = await fs.readFile(talkerF, 'utf-8');
-  const talkersJson = JSON.parse(talkers);
-  const { name, age, talk } = req.body;
-  const newTalker = {
-    id: talkersJson.length + 1,
-    name,
-    age,
-    talk,
-  };
-  talkersJson.push(newTalker);
-  await fs.writeFile(talkerF, JSON.stringify(talkersJson));
-  res.status(201).json(newTalker);
-});
+app.post('/talker',
+  authToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateRate,
+  validateWatchedAt, async (req, res) => {
+    const talkers = await fs.readFile(talkerF, 'utf-8');
+    const talkersJson = JSON.parse(talkers);
+    const { name, age, talk } = req.body;
+    const newTalker = { id: talkersJson.length + 1, name, age, talk };
+    talkersJson.push(newTalker);
+    await fs.writeFile(talkerF, JSON.stringify(talkersJson));
+    res.status(201).json(newTalker);
+  });
 
 app.listen(PORT, () => {
   console.log('Online');
