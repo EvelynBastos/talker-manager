@@ -2,6 +2,10 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 
+const tokenGenerate = require('./utils/token');
+const authLogin = require('./middlewares/authLogin');
+const authPass = require('./middlewares/authPass');
+
 const talkerF = path.resolve(__dirname, './talker.json');
 
 const app = express();
@@ -33,6 +37,12 @@ app.get('/talker/:id', async (req, res) => {
   }
 
   res.status(HTTP_OK_STATUS).json(talker);
+});
+
+app.post('/login', authLogin, authPass, (_req, res) => {
+  const token = tokenGenerate();
+
+  res.status(HTTP_OK_STATUS).json({ token });
 });
 
 app.listen(PORT, () => {
