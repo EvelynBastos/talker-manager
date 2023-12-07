@@ -5,6 +5,12 @@ const path = require('path');
 const tokenGenerate = require('./utils/token');
 const authLogin = require('./middlewares/authLogin');
 const authPass = require('./middlewares/authPass');
+const authToken = require('./utils/authToken');
+const validateName = require('./middlewares/validateName');
+const validateAge = require('./middlewares/validateAge');
+const validateTalk = require('./middlewares/validateTalk');
+const validateRate = require('./middlewares/validateRate');
+const validateWatchedAt = require('./middlewares/validateWatchedAt');
 
 const talkerF = path.resolve(__dirname, './talker.json');
 
@@ -43,6 +49,21 @@ app.post('/login', authLogin, authPass, (_req, res) => {
   const token = tokenGenerate();
 
   res.status(HTTP_OK_STATUS).json({ token });
+});
+
+app.post('/talker', authToken, validateName, validateAge, validateTalk, validateRate, validateWatchedAt, async (req, res) => {
+  const talkers = await fs.readFile(talkerF, 'utf-8');
+  const talkersJson = JSON.parse(talkers);
+  const { name, age, talk } = req.body;
+  const newTalker = {
+    id: talkersJson.length + 1,
+    name,
+    age,
+    talk,
+  };
+  talkersJson.push(newTalker);
+  await fs.writeFile(talkerF, JSON.stringify(talkersJson));
+  res.status(201).json(newTalker);
 });
 
 app.listen(PORT, () => {
