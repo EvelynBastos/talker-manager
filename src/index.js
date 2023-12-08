@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-
 const tokenGenerate = require('./utils/token');
 const authLogin = require('./middlewares/authLogin');
 const authPass = require('./middlewares/authPass');
@@ -89,6 +88,17 @@ app.put('/talker/:id',
     await fs.writeFile(talkerF, newTalker);
     res.status(200).json(talkerIndex);
   });
+
+app.delete('/talker/:id', authToken, async (req, res) => {
+  const id = Number(req.params.id);
+  const talkers = await fs.readFile(talkerF, 'utf-8');
+  const positionTalker = JSON.parse(talkers);
+  const index = positionTalker.findIndex((talk) => talk.id === +id);
+  positionTalker.splice(index, 1);
+  const newTalkers = JSON.stringify(positionTalker);
+  await fs.writeFile(talkerF, newTalkers);
+  res.status(204).end();
+});
 
 app.listen(PORT, () => {
   console.log('Online');
