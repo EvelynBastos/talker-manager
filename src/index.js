@@ -31,7 +31,7 @@ app.get('/talker', async (req, res) => {
   res.status(HTTP_OK_STATUS).json(talkersJson);
 });
 
-// Req. 8
+// Req.8
 app.get('/talker/search', authToken, async (req, res) => {
   const { q } = req.query;
   const talkers = await fs.readFile(talkerF, 'utf-8');
