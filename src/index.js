@@ -46,7 +46,6 @@ app.get('/talker/search', authToken, async (req, res) => {
   res.status(200).json(talkerFilter);
 });
 
-
 app.get('/talker/:id', async (req, res) => {
   const talkers = await fs.readFile(talkerF, 'utf-8');
   const talkersJson = JSON.parse(talkers);
